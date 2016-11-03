@@ -1,0 +1,69 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/coa-employee-login/coa-employee-login-form.html">
+
+<dom-module id="view-login">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+      coa-employee-login-form {
+        display: block;
+        position: relative;
+        width: 450px;
+        max-width: 100%;
+        margin: calc(50vh - 150px) auto auto auto;
+      }
+      label {
+        display: flex;
+	      justify-content: space-between;
+        margin: 0.25rem 0;
+      }
+			button {
+				position: absolute; right: 0;
+			}
+    </style>
+
+    <coa-employee-login-form on-user-log-on="goHome">
+      <form is="iron-form" id="form" method="post" action="https://api.auburnalabama.org/organization/employee/token"
+              content-type="application/json">
+        <label>
+          <span>Username</span>
+          <input autofocus aria-placeholder="Username" name="username" type="text" />
+        </label>
+        <label>
+          <span>Password</span>
+          <input aria-placeholder="Password" name="password" type="password" />
+        </label>
+        <label>
+          <span>Remember Me</span>
+          <input type="checkbox" name="isPersistent" />
+        </label>
+        <button type="submit">Log In</button>
+      </form>
+    </coa-employee-login-form>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'view-login',
+      goHome: function() {
+        window.location = './';
+      }
+    });
+  </script>
+</dom-module>

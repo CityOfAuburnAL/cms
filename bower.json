@@ -1,0 +1,32 @@
+{
+  "name": "cms",
+  "homepage": "https://github.com/CityOfAuburnAL",
+  "authors": [
+    "Chris Griffin <chris.sgriffin@gmail.com>"
+  ],
+  "description": "CMS",
+  "main": "coa-cms-site.html",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "CMS"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CityOfAuburnAl/cms.git"
+  },
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.7.0",
+    "coa-ajax": "CityOfAuburnAl/coa-ajax#*",
+	"coa-cms-site": "CityOfAuburnAl/coa-cms-site#*"
+  },
+  "devDependencies": {
+    "web-component-tester": "*"
+  }
+}

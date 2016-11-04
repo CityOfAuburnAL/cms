@@ -11,28 +11,91 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/coa-cms-site/coa-cms-site.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
 
 <dom-module id="view-site">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
-
-        padding: 10px;
+      }
+      h1 {
+        display: inline-block;
+      }
+      paper-tab.iron-selected {
+        font-weight: 700;
+      }
+      paper-tab > a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        text-decoration: none;
+        color: #111;
       }
     </style>
 
-    <div class="card">
-      <div class="circle">2</div>
-      <h1>View Two</h1>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.</p>
-      <p>Id nam odio natum malorum, tibique copiosae expetenda mel ea.Detracto suavitate repudiandae no eum. Id adhuc minim soluta nam.Id nam odio natum malorum, tibique copiosae expetenda mel ea.</p>
-    </div>
+    <app-route id="appRoute"
+        route="{{route}}"
+        pattern="/:siteId/:editor"
+        data="{{routeData}}"
+        active="{{routeActive}}"
+        query-params="{{entity}}"
+        tail="{{subroute}}"></app-route>
+
+    <iron-pages
+            selected="[[editor]]"
+            attr-for-selected="name"
+            fallback-selection="list">
+          <section name="list">
+            <div class="card">
+              <p class="circle">[[site.ID]]</p>
+              <h1>[[site.Name]]</h1>
+              <p>
+                <coa-cms-site site-id="1" site="{{site}}" assets="{{assets}}" regions="{{regions}}"></coa-cms-site>
+              </p>
+            </div>
+          </section>
+          <section name="asset">
+            <paper-tabs selected="{{entity.name}}" attr-for-selected="name">
+              <template is="dom-repeat" items="[[assets]]">
+                <paper-tab name="[[item.name]]" link>
+                  <a href="asset?name=[[item.name]]&type=[[item.type]]&path=[[item.path]]" tabindex="-1">[[item.name]]</a>
+                </paper-tab>
+              </template>
+            </paper-tabs>
+            <editor-site-asset id="assetEditor" editor="[[editor]]" site-id="[[site.ID]]" asset="[[entity]]"></editor-site-asset>
+          </section>
+          <section name="region">
+            <paper-tabs selected="{{entity.name}}" attr-for-selected="name">
+              <template is="dom-repeat" items="[[regions]]">
+                <paper-tab name="[[item]]" link>
+                  <a href="region?name=[[item]]" tabindex="-1">[[item]]</a>
+                </paper-tab>
+              </template>
+            </paper-tabs>
+            <editor-site-region id="regionEditor" editor="[[editor]]" site-id="[[routeData.siteId]]" region="[[entity.name]]"></editor-site-region>
+          </section>
+    </iron-pages>
+    
   </template>
 
   <script>
     Polymer({
-      is: 'view-site'
+      is: 'view-site',
+
+      observers: [
+        '_routeDataChanged(routeActive, routeData.editor)'
+      ],
+      //app-route is flawed, if not active routeData will remain the same
+      _routeDataChanged: function(active, editor) {
+        this.editor = (!active || !editor ? 'list' : editor);
+        if (this.editor == 'asset') {
+          this.importHref(this.resolveUrl('editor-site-asset.html'));
+        }
+        else if (this.editor == 'region') {
+          this.importHref(this.resolveUrl('editor-site-region.html'));
+        }
+      }
     });
   </script>
 </dom-module>

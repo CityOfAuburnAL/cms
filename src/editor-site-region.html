@@ -1,0 +1,91 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="editor-site-styles.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
+
+<dom-module id="editor-site-region">
+  <template>
+    <style include="editor-site-styles">
+		:host {
+			--paper-toast-background-color: #F1F1F1;
+			--paper-toast-color: #323232;
+		}
+	  #editor {
+		  	background: #272822;
+			position: absolute;
+			top: calc(64px + 48px);
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+    </style>
+
+	<coa-ajax>
+		<iron-ajax id="getAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" last-response="{{content}}" on-response="loadEditor" handle-as="text"></iron-ajax>
+		<iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" 
+			content-type="application/json" 
+			method="PUT"
+			on-response="handleSave"
+			on-error="handleError"></iron-ajax>
+	</coa-ajax>
+
+	<div id="editor"></div>
+	
+	<paper-toast id="toast"></paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'editor-site-region',
+	  observers: [
+		  'load(region)'
+	  ],
+	  ready: function() {
+		  this.$.toast.fitInto = this.$.editor;
+	  },
+	  save: function() {
+		var currentValue = this.editor.getSession().getValue();
+		if (this.content != currentValue) {
+			this.content = currentValue;
+			this.$.saveAjax.params = { "content" : this.content };
+			this.$.saveAjax.generateRequest();
+		} else {
+			this._notify('No changes detected.');
+		}
+	  },
+	  handleError: function() {
+		  this._notify('ERROR!');
+	  },
+	  handleSave: function() {
+		  this._notify('Saved!');
+	  },
+	  _notify: function(msg) {
+		  this.$.toast.text = msg;
+		  this.$.toast.open();
+	  },
+	  load: function() {
+		  if (this.region && this.editor == 'region') {
+			  this.$.getAjax.generateRequest();
+			  if (!this.inited) this.initEditor();
+		  }
+	  },
+	  initEditor: function() {
+			this.editor = ace.edit(this.$.editor);
+			this.editor.setTheme("ace/theme/monokai");
+			this.editor.getSession().setMode("ace/mode/html");
+			this.editor.setShowPrintMargin(false);
+			this.editor.commands.addCommand({
+				name: 'save',
+				bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
+				exec: this.save.bind(this)
+			});
+			this.inited = true;
+		},
+		loadEditor: function() {
+			this.editor.getSession().setValue(this.content, 0);
+			this.editor.focus();
+		}
+    });
+  </script>
+</dom-module>

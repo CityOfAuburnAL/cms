@@ -1,0 +1,133 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="editor-site-styles.html">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
+<!--<link rel="import" href="../bower_components/juicy-ace-editor/juicy-ace-editor.html">-->
+
+<dom-module id="editor-site-asset">
+  <template>
+    <style include="editor-site-styles">
+		:host {
+			--paper-toast-background-color: #F1F1F1;
+			--paper-toast-color: #323232;
+		}
+	  #editor {
+		  	background: #272822;
+			position: absolute;
+			top: calc(64px + 48px);
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+    </style>
+
+	<iron-ajax id="getAjax" url="[[asset.path]]" last-response="{{contents}}" on-response="loadEditor" handle-as="text" headers='{"Accept": ""}'></iron-ajax>
+	<coa-ajax>
+		<iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/assets" 
+			content-type="application/json" 
+			method="POST"
+			on-response="handleSave"
+			on-error="handleError"></iron-ajax>
+	</coa-ajax>
+
+	<div id="editor"></div>
+	
+	<paper-toast id="toast" text="Saved!" always-on-top="true"></paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'editor-site-asset',
+	  observers: [
+		  'load(asset.name)'
+	  ],
+	  ready: function() {
+		  this.$.toast.fitInto = this.$.editor;
+	  },
+	  //TODO - replace the above style tag with this functionality
+	  moveStyleToShadow: function() {
+		  var csses = ['ace_editor.css','ace-monokai'];
+		  for (var i = 0; i < csses.length; i++) {
+		  	this.shadowRoot.appendChild(this.cloneStyle(document.getElementById(csses[i])));
+		  }
+	  },
+	  //useful for the TODO above
+	  cloneStyle: function(style) {
+		  var s = document.createElement('style');
+		  s.id = style.id;
+		  s.textContent = style.textContent;
+		  return s;
+	  },
+	  save: function() {
+		var currentValue = this.editor.getSession().getValue();
+		if (this.asset.contents != currentValue) {
+			this.asset.contents = currentValue;
+			this.$.saveAjax.body = this.asset;
+			this.$.saveAjax.generateRequest();
+		} else {
+			this._notify('No changes detected.');
+		}
+	  },
+	  handleError: function() {
+		  this._notify('ERROR!');
+	  },
+	  handleSave: function() {
+		  this._notify('Saved!');
+	  },
+	  _notify: function(msg) {
+		  this.$.toast.text = msg;
+		  this.$.toast.open();
+	  },
+	  load: function() {
+		  if (this.asset.name && this.editor == 'asset') {
+			  this.$.getAjax.generateRequest();
+			  if (!this.inited) this.initEditor();
+			  this.handleType();
+		  }
+	  },
+	  handleType: function() {
+		  this.initEditor();
+		  switch (this.asset.type) {
+			  case '.css':
+			  	this.mode = 'css';
+				this.accept = 'text/css';
+				break;
+			case '.html':
+				this.mode = 'html';
+				this.accept = 'text/html';
+				break;
+			case '.js':
+				this.mode = 'javascript';
+				this.accept = 'application/javascript';
+				break;
+			default:
+				//TODO - Keep this whole damn file from running until the page is selected...
+				console.error('Asset Type not coded');
+				return;
+		  }
+		  this.$.getAjax.headers['Accept'] = this.accept;
+		  this.$.getAjax.generateRequest();
+		  this.editor.getSession().setMode("ace/mode/" + this.mode);
+		  //this.$.editor.mode = "ace/mode/" + this.mode;
+		  //this.editor.getSession().setMode('ace/mode/' + this.mode);
+	  },
+	  initEditor: function() {
+			this.editor = ace.edit(this.$.editor);
+			this.editor.setTheme("ace/theme/monokai");
+			this.editor.setShowPrintMargin(false);
+			this.editor.commands.addCommand({
+				name: 'save',
+				bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
+				exec: this.save.bind(this)
+			});
+			this.inited = true;
+		},
+		loadEditor: function() {
+			this.asset.contents = this.contents;
+			this.editor.getSession().setValue(this.contents, 0);
+			this.editor.focus();
+		}
+    });
+  </script>
+</dom-module>

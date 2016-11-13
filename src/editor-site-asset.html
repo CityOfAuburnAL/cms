@@ -80,7 +80,7 @@
 		  this.$.toast.open();
 	  },
 	  load: function() {
-		  if (this.asset.name && this.editor == 'asset') {
+		  if (this.asset.name && this.route == 'asset') {
 			  this.$.getAjax.generateRequest();
 			  if (!this.inited) this.initEditor();
 			  this.handleType();

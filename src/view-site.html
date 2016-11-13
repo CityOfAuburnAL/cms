@@ -63,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </paper-tab>
               </template>
             </paper-tabs>
-            <editor-site-asset id="assetEditor" editor="[[editor]]" site-id="[[site.ID]]" asset="[[entity]]"></editor-site-asset>
+            <editor-site-asset id="assetEditor" route="[[editor]]" site-id="[[site.ID]]" asset="[[entity]]"></editor-site-asset>
           </section>
           <section name="region">
             <paper-tabs selected="{{entity.name}}" attr-for-selected="name">
@@ -73,7 +73,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </paper-tab>
               </template>
             </paper-tabs>
-            <editor-site-region id="regionEditor" editor="[[editor]]" site-id="[[routeData.siteId]]" region="[[entity.name]]"></editor-site-region>
+            <editor-site-region id="regionEditor" route="[[editor]]" site-id="[[routeData.siteId]]" region="[[entity.name]]"></editor-site-region>
           </section>
     </iron-pages>
     

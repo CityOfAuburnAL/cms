@@ -1,0 +1,105 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+
+<dom-module id="form-sitepage">
+  <template strip-whitespace>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      coa-label {
+        display: block;
+      }
+      coa-button + coa-button {
+        margin-left: 24px;
+      }
+    </style>
+
+    <coa-ajax>
+      <iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/site/1/page"
+                 content-type="application/json"
+                 last-response="{{page}}"
+                 on-response="handleSave"></iron-ajax>
+    </coa-ajax>
+
+    <form id="form" class="card">
+      <input type="hidden" name="ID" value="[[updated.ID]]" />
+      <input type="hidden" name="SiteID" value="[[updated.SiteID]]" />
+      <coa-label>
+        <label>Name
+          <input type="text" name="Name" value="{{updated.Name::input}}" placeholder="Page Name" autofocus />
+        </label>
+      </coa-label>
+      <coa-label>
+        <label>Type
+          <select id="typeSelect">
+            <option disabled selected>Select Page Type</option>
+            <option value="1">Landing</option>
+            <option value="2">Article</option>
+          </select>
+        </label>
+      </coa-label>
+      <coa-label>
+        <label>Path
+          <input type="text" name="Path" value="{{updated.Path::input}}" placeholder="Page Path" />
+        </label>
+      </coa-label>
+      <div style="text-align: right">
+        <coa-button>
+          <button type="button" on-tap="unloadPage">Cancel</button>
+        </coa-button>
+        <coa-button>
+          <button type="submit">Submit</button>
+        </coa-button>
+      </div>
+    </form>
+
+    <paper-toast id="toast" text="Saved!" always-on-top="true"></paper-toast>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'form-sitepage',
+      observers: [
+        'handlePage(page.ID)'
+      ],
+      handlePage: function(pageId) {
+        if (this.page)
+          this.updated = JSON.parse(JSON.stringify(this.page));
+        if (pageId > 0) {
+          this.$.typeSelect.querySelector('option[value="' + this.updated.PageTypeID + '"]').selected = true;
+          this.$.saveAjax.method = "PUT";
+          this.$.saveAjax.url = "https://api.auburnalabama.org/cms/site/1/page/" + pageId;
+          return;
+        }
+
+        this.$.saveAjax.method = "POST";
+        this.$.saveAjax.url = "https://api.auburnalabama.org/cms/site/1/page";
+      },
+      handlePageType: function(evt) {
+        this.updated.PageTypeID = this.$.typeSelect.querySelector('option:checked').value;
+      },
+      handleSubmit: function(evt) {
+        evt.preventDefault();
+
+        this.$.saveAjax.body = JSON.stringify(this.updated);
+        this.$.saveAjax.generateRequest();
+      },
+      handleSave: function() {
+        this.$.toast.horizontalOffset = this.getBoundingClientRect().left + 'px';
+        this.$.toast.open();
+        this.unloadPage();
+      },
+      unloadPage: function() {
+        window.history.pushState({}, null, '/cms/sitepage/1');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      },
+      ready: function() {
+        this.$.form.addEventListener('submit', this.handleSubmit.bind(this));
+        this.$.typeSelect.addEventListener('change', this.handlePageType.bind(this));
+      }
+    });
+  </script>
+</dom-module>

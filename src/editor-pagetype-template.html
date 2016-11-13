@@ -4,7 +4,7 @@
 <link rel="import" href="editor-site-styles.html">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
 
-<dom-module id="editor-site-region">
+<dom-module id="editor-pagetype-template">
   <template>
     <style include="editor-site-styles">
 		:host {
@@ -21,34 +21,36 @@
 		}
     </style>
 
-	<coa-ajax>
-		<iron-ajax id="getAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" last-response="{{content}}" on-response="loadEditor" handle-as="text"></iron-ajax>
-		<iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" 
-			content-type="application/json" 
-			method="PUT"
-			on-response="handleSave"
-			on-error="handleError"></iron-ajax>
-	</coa-ajax>
+		<coa-ajax>
+			<iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/pagetype/[[pagetype.ID]]/template" 
+				content-type="application/json" 
+				method="POST"
+				on-response="handleSave"
+				on-error="handleError"></iron-ajax>
+		</coa-ajax>
 
-	<div id="editor"></div>
-	
-	<paper-toast id="toast"></paper-toast>
+		<div id="editor"></div>
+		
+		<paper-toast id="toast"></paper-toast>
   </template>
 
   <script>
     Polymer({
-      is: 'editor-site-region',
+      is: 'editor-pagetype-template',
+			properties: {
+				region: Object
+			},
 	  observers: [
-		  'load(region)'
+		  'load(pagetype.ID)'
 	  ],
 	  ready: function() {
 		  this.$.toast.fitInto = this.$.editor;
 	  },
 	  save: function() {
 		var currentValue = this.editor.getSession().getValue();
-		if (this.content != currentValue) {
-			this.content = currentValue;
-			this.$.saveAjax.params = { "content" : this.content };
+		if (this.pagetype.Template != currentValue) {
+			this.pagetype.Template = currentValue;
+			this.$.saveAjax.body = { "template" : this.pagetype.Template };
 			this.$.saveAjax.generateRequest();
 		} else {
 			this._notify('No changes detected.');
@@ -65,9 +67,9 @@
 		  this.$.toast.open();
 	  },
 	  load: function() {
-		  if (this.region && this.route == 'region') {
-			  this.$.getAjax.generateRequest();
+		  if (this.pagetype && this.route == 'template') {
 			  if (!this.inited) this.initEditor();
+				this.loadEditor();
 		  }
 	  },
 	  initEditor: function() {
@@ -83,7 +85,8 @@
 			this.inited = true;
 		},
 		loadEditor: function() {
-			this.editor.getSession().setValue(this.content, 0);
+			console.log('load editor');
+			this.editor.getSession().setValue(this.pagetype.Template, 0);
 			this.editor.focus();
 		}
     });

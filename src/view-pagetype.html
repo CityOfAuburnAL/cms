@@ -1,0 +1,150 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+
+<dom-module id="view-pagetype">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      h1 { display: inline-block; }
+			dd ul {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			dd li {
+				display: inline-block;
+			}
+			dd li:not(:last-of-type) {
+				margin-right: 1rem;
+			}
+      paper-tab.iron-selected {
+        font-weight: 700;
+      }
+      paper-tab > a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        text-decoration: none;
+        color: #111;
+      }
+    </style>
+
+    <coa-ajax>
+      <iron-ajax auto url="https://api.auburnalabama.org/cms/pagetype"
+                 last-response="{{pageTypes}}"></iron-ajax>
+    </coa-ajax>
+
+    <app-route id="appRoute"
+        route="{{route}}"
+        pattern="/:typeId/:editor"
+        data="{{routeData}}"
+        active="{{routeActive}}"
+        query-params="{{entity}}"
+        tail="{{subroute}}"></app-route>
+
+    <iron-pages
+            selected="[[editor]]"
+            attr-for-selected="name"
+            fallback-selection="list">
+      <section name="list">  
+        <template is="dom-repeat" items="[[pageTypes]]">
+          <section class="card">
+            <header>
+              <p class="circle">[[item.ID]]</p>
+                  <h1>[[item.Name]]</h1>
+            </header>
+            <p>
+              <dl>
+                <dt>Template</dt>
+                <dd><a href="./pagetype/[[item.ID]]/template">Edit [[item.Name]] Template</a></dd>
+              </dl>
+              <dl>
+                <dt>Regions</dt>
+                <dd>
+                  <ul>
+                    <template is="dom-repeat" items="[[item.PageTypeRegions]]" as="region">
+                      <li><a href="./pagetype/[[item.ID]]/region?name=[[region.Name]]">[[region.Name]]</a></li>
+                    </template>
+                  </ul>
+                </dd>
+              </dl>
+            </p>
+          </section>
+        </template>
+      </section>
+      <section name="template">
+        <paper-tabs selected="[[pagetype.Name]]" attr-for-selected="name" scrollable fit-container>
+          <template is="dom-repeat" items="[[pageTypes]]">
+            <paper-tab name="[[item.Name]]" link>
+              <a href="../[[item.ID]]/template" tabindex="-1">[[item.Name]]</a>
+            </paper-tab>
+          </template>
+        </paper-tabs>
+        <editor-pagetype-template pagetype="[[pagetype]]" route="[[editor]]"></editor-pagetype-template>
+      </section>
+      <section name="region">
+        <paper-tabs selected="[[region.Name]]" attr-for-selected="name" scrollable fit-container>
+          <template is="dom-repeat" items="[[pagetype.PageTypeRegions]]">
+            <paper-tab name="[[item.Name]]" link>
+              <a href="region?name=[[item.Name]]" tabindex="-1">[[item.Name]]</a>
+            </paper-tab>
+          </template>
+        </paper-tabs>
+        <editor-pagetype-region id="regionEditor" pagetype="[[pagetype]]" region="[[region]]" route="[[editor]]"></editor-pagetype-region>
+      </section>
+    </iron-pages>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'view-pagetype',
+      observers: [
+        '_routeDataChanged(routeActive, routeData.typeId, routeData.editor)',
+        'handleType(typeId, pageTypes)',
+        'handleRegion(entity.name, pagetype)'
+      ],
+      //app-route is flawed, if not active routeData will remain the same
+      _routeDataChanged: function(active, typeId, editor) {
+        if (!active) {
+          this.pagetype = undefined;
+          this.editor = 'list';
+          return;
+        }
+
+        this.editor = editor;
+        this.typeId = typeId;
+        if (this.editor == 'template') {
+          this.importHref(this.resolveUrl('editor-pagetype-template.html'));
+        }
+        else if (this.editor == 'region') {
+          this.importHref(this.resolveUrl('editor-pagetype-region.html'));
+        }
+      },
+      handleRegion: function(regionName, pagetype) {
+        for (var i = 0; i < this.pagetype.PageTypeRegions.length; i++) {
+          if (this.pagetype.PageTypeRegions[i].Name == this.entity.name) {
+            this.region = this.pagetype.PageTypeRegions[i];
+            if (this.$.regionEditor.load) this.$.regionEditor.load();
+            //this.$.regionEditor.set('region', this.pagetype.PageTypeRegions[i]);
+            return; 
+          }
+        }
+        this.region = undefined;
+      },
+      handleType: function() {
+        for (var i = 0; i < this.pageTypes.length; i++) {
+          if (this.pageTypes[i].ID == this.typeId) {
+            this.pagetype = this.pageTypes[i];
+            return; 
+          }
+        }
+        this.pagetype = undefined;
+      }
+    });
+  </script>
+</dom-module>

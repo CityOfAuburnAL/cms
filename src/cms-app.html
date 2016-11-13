@@ -83,7 +83,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <button hidden$="[[!user.authenticated]]" on-tap="logout">Logout</button>
         </app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="site" href="[[basePath]]/site">Site</a>
+          <a name="site" href="/cms/site">Site</a>
+          <a name="pagetype" href="/cms/pagetype">Pagetype</a>
+          <a name="sitepage" href="/cms/sitepage/1">Webpage</a>
         </iron-selector>
       </app-drawer>
 
@@ -105,7 +107,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             role="main">
           <view-login name="login"></view-login>
           <view-site name="site" route="[[subroute]]"></view-site>
-          <my-view3 name="view3"></my-view3>
+          <view-pagetype name="pagetype" route="[[subroute]]"></view-pagetype>
+          <view-sitepage name="sitepage" route="[[subroute]]"></view-sitepage>
           <view-404 name="404"></view-404>
         </iron-pages>
       </app-header-layout>
@@ -117,10 +120,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'cms-app',
 
       properties: {
-        basePath: {
-          type: String,
-          value: function() { return '/cms';/*Also hardcoded into app-route, index.html, and web.config*/ }
-        },
         page: {
           type: String,
           reflectToAttribute: true,

@@ -1,11 +1,18 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/my-app.html",
+  "shell": "src/cms-app.html",
   "fragments": [
-    "src/my-view1.html",
-    "src/my-view2.html",
-    "src/my-view3.html",
-    "src/my-view404.html"
+    "src/editor-pagetype-region.html",
+    "src/editor-pagetype-template.html",
+    "src/editor-site-asset.html",
+    "src/editor-site-region.html",
+    "src/editor-site-styles.html",
+    "src/form-sitepage.html",
+    "src/view-404.html",
+    "src/view-login.html",
+    "src/view-pagetype.html",
+    "src/view-site.html",
+    "src/view-sitepage.html"
   ],
   "sourceGlobs": [
    "src/**/*",

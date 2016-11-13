@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/coa-ajax/coa-ajax.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="editor-site-styles.html">
@@ -21,18 +22,18 @@
 		}
     </style>
 
-	<coa-ajax>
-		<iron-ajax id="getAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" last-response="{{content}}" on-response="loadEditor" handle-as="text"></iron-ajax>
-		<iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" 
-			content-type="application/json" 
-			method="PUT"
-			on-response="handleSave"
-			on-error="handleError"></iron-ajax>
-	</coa-ajax>
+		<coa-ajax>
+			<iron-ajax id="getAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" last-response="{{content}}" on-response="loadEditor" handle-as="text"></iron-ajax>
+			<iron-ajax id="saveAjax" url="https://api.auburnalabama.org/cms/site/[[siteId]]/region/[[region]]" 
+				content-type="application/json" 
+				method="PUT"
+				on-response="handleSave"
+				on-error="handleError"></iron-ajax>
+		</coa-ajax>
 
-	<div id="editor"></div>
-	
-	<paper-toast id="toast"></paper-toast>
+		<div id="editor"></div>
+		
+		<paper-toast id="toast"></paper-toast>
   </template>
 
   <script>

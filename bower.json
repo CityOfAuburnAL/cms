@@ -1,7 +1,7 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "cms-app",
   "authors": [
-    "The Polymer Authors"
+    "City of Auburn"
   ],
   "private": true,
   "dependencies": {

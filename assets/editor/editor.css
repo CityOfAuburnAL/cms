@@ -1,0 +1,93 @@
+﻿/* Alignment styles for images, videos and iframes in editable regions */
+
+/* Center (default) */
+[data-editable] iframe,
+[data-editable] image,
+[data-editable] [data-ce-tag=img],
+[data-editable] img,
+[data-editable] video {
+    clear: both;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+/* Left align */
+[data-editable] .align-left {
+    clear: initial;
+    float: left;
+    margin-right: 0.5em;
+}
+
+/* Right align */
+[data-editable].align-right {
+    clear: initial;
+    float: right;
+    margin-left: 0.5em;
+}
+
+/* Alignment styles for text in editable regions */
+[data-editable] .text-center {
+    text-align: center;
+}
+
+[data-editable] .text-left {
+    text-align: left;
+}
+
+[data-editable] .text-right {
+    text-align: right;
+}
+
+/* WIDGET */
+.ct-widget.ct-ignition {
+    top: 72px;
+}
+
+/* Sometimes the way contentTools handles images really annoys me... particularly background images that aren't background images */
+div[is='page-header-background'] div.ce-element.ce-element--type-image {
+	height: 100% !important;
+	width: 100% !important;
+	background-position: center center;
+}
+
+[data-name='landing-action-background'] div.ce-element.ce-element--type-image {
+	width: 100% !important;
+	height: 100% !important;
+	background-position: 0 center;
+	background-size: 75% auto;
+	position: absolute;
+	z-index: 0;
+}
+
+[data-name='landing-alert'] .ce-element--empty:after {
+	content: '... Breaking News/Notices';
+}
+[data-name='landing-services'] .ce-element--empty:after {
+	content: '... Links to services/sections';
+}
+[data-name='landing-search'] .ce-element--empty:after {
+	content: '... Links/Search into database';
+}
+[data-name='landing-news-header'] .ce-element--empty:after {
+	content: '... Press Release Name (for news list)';
+}
+[data-name='landing-calendar-header'] .ce-element--empty:after {
+	content: '... Calendar Name (for event list)';
+}
+[data-name='landing-featured']  .ce-element--empty:after {
+	content: '... Featured Items in Collections - Links (Contact IT)';
+}
+[data-name='landing-action-background'] .ce-element--empty:after {
+	content: '... Give it a background image to really make it pop!';
+}
+[data-name='landing-action-content'] .ce-element--empty:after {
+	content: '... Call to action';
+}
+[data-name='landing-info']  .ce-element--empty:after {
+	content: '... REQUIRED. Give user contact/about info';
+}
+[data-name='landing-faq']  .ce-element--empty:after {
+	content: '... FAQs (Contact IT)';
+}

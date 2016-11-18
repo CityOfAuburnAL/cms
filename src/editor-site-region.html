@@ -46,19 +46,19 @@
 		  this.$.toast.fitInto = this.$.editor;
 	  },
 	  save: function() {
-		var currentValue = this.editor.getSession().getValue();
-		if (this.content != currentValue) {
-			this.content = currentValue;
-			this.$.saveAjax.params = { "content" : this.content };
-			this.$.saveAjax.generateRequest();
-		} else {
-			this._notify('No changes detected.');
-		}
+			var currentValue = this.editor.getSession().getValue();
+			if (this.content != currentValue) {
+				this.$.saveAjax.body = { "Name": this.region, "Content" : currentValue };
+				this.$.saveAjax.generateRequest();
+			} else {
+				this._notify('No changes detected.');
+			}
 	  },
 	  handleError: function() {
 		  this._notify('ERROR!');
 	  },
 	  handleSave: function() {
+			this.content = this.editor.getSession().getValue();
 		  this._notify('Saved!');
 	  },
 	  _notify: function(msg) {

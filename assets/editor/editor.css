@@ -1,6 +1,6 @@
 ﻿/* Alignment styles for images, videos and iframes in editable regions */
 
-/* Center (default) */
+/* Center (default)
 [data-editable] iframe,
 [data-editable] image,
 [data-editable] [data-ce-tag=img],
@@ -11,23 +11,23 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
-}
+} */
 
-/* Left align */
+/* Left align
 [data-editable] .align-left {
     clear: initial;
     float: left;
     margin-right: 0.5em;
-}
+} */
 
-/* Right align */
+/* Right align
 [data-editable].align-right {
     clear: initial;
     float: right;
     margin-left: 0.5em;
-}
+} */
 
-/* Alignment styles for text in editable regions */
+/* Alignment styles for text in editable regions 
 [data-editable] .text-center {
     text-align: center;
 }
@@ -38,11 +38,16 @@
 
 [data-editable] .text-right {
     text-align: right;
-}
+}*/
 
 /* WIDGET */
 .ct-widget.ct-ignition {
     top: 72px;
+	left: auto;/*Default 16px*/
+	right: 64px;
+}
+.ct-widget.ct-ignition.ct-ignition--editing {
+	right: 128px;
 }
 
 /* Sometimes the way contentTools handles images really annoys me... particularly background images that aren't background images */

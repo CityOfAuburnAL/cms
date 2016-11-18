@@ -1,5 +1,10 @@
 ﻿var user = window.user || JSON.parse(localStorage.user);//in editor.js and utilities.js
 user.API = (window.location.href.indexOf("localhost") > -1 ? 'http://localhost:21695/cms/' : 'https://api.auburnalabama.org/cms/');
+var reg = new RegExp('(?:(?:^|.*;\\s*)' +
+                        "access_token" +
+                        '\\s*\\=\\s*([^;]*).*$)|^.*$');
+
+user.token = document.cookie.replace(reg, '$1');
 //user.API = 'http://localhost:21695/cms/';
 //user.API = 'https://api.auburnalabama.org/cms/';
 var editor;
@@ -22,6 +27,32 @@ window.addEventListener('load', function () {
     
     if (pdfUploader)
         ContentTools.PDF_UPLOADER = pdfUploader;
+
+    ContentTools.DEFAULT_TOOLS = [
+        [
+            'bold',
+            'italic',
+            'link',
+            'align-left',
+            'align-center',
+            'align-right'
+        ], [
+            'heading',
+            'subheading',
+            'paragraph',
+            'unordered-list',
+            'ordered-list',
+            'table'
+        ], [
+            'image',
+            'video',
+            'pdf'
+        ], [
+            'undo',
+            'redo',
+            'remove'
+        ]
+    ];
 
     editor = ContentTools.EditorApp.get();
     editor.init('*[data-editable]', 'data-name');

@@ -1,12 +1,9 @@
 ﻿var user = window.user || JSON.parse(localStorage.user);//in editor.js and utilities.js
+user.token = localStorage.access_token;
 user.API = (window.location.href.indexOf("localhost") > -1 ? 'http://localhost:21695/cms/' : 'https://api.auburnalabama.org/cms/');
-var reg = new RegExp('(?:(?:^|.*;\\s*)' +
-                        "access_token" +
-                        '\\s*\\=\\s*([^;]*).*$)|^.*$');
-
-user.token = document.cookie.replace(reg, '$1');
 //user.API = 'http://localhost:21695/cms/';
 //user.API = 'https://api.auburnalabama.org/cms/';
+
 var editor;
 
 window.getPageData = function() {
@@ -21,6 +18,8 @@ window.getPageData = function() {
 }
 
 window.addEventListener('load', function () {
+    if (!user.token) return;
+    
     //Config
     if (imageUploader)
         ContentTools.IMAGE_UPLOADER = imageUploader;

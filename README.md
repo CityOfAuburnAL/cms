@@ -18,6 +18,14 @@ The PRPL pattern, in a nutshell:
 * **Pre-cache** components for remaining routes
 * **Lazy-load** and progressively upgrade next routes on-demand
 
+### Gotchas
+
+* **Page Redirect**
+`
+window.history.pushState({}, null, '/cms/sitepage/1');
+window.dispatchEvent(new CustomEvent('location-changed'));
+`
+
 ### Migrating from Polymer Starter Kit v1?
 
 [Check out our blog post that covers what's changed in PSK2 and how to migrate!](https://www.polymer-project.org/1.0/blog/2016-08-18-polymer-starter-kit-or-polymer-cli.html)

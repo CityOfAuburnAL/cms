@@ -53,7 +53,11 @@
     Polymer({
       is: 'view-login',
       goHome: function() {
-        window.location = '/cms/';
+        //TODO - fix a bunch of stuff. There is a UI bug when the page isn't refresh. Basically we'd need to call resetLayout() for the app-drawer-layer or not mark it hidden to begin with.
+        //TODO - UI bug fixed but coa-cms-site doesn't try to fetch the site data but once, and since it tried without auth it failed.
+        //window.history.pushState({}, null, '/cms/');
+        //window.dispatchEvent(new CustomEvent('location-changed'));
+        window.location.reload();
       }
     });
   </script>
